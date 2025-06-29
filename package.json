@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.10",
+    "awesomplete": "^1.1.7",
     "flowbite": "^3.1.2"
   }
 }
