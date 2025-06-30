@@ -1,9 +1,10 @@
 import { Account} from './Account.js';
 
 export class CreditCard{
-    constructor(name, limit){
+    constructor(name, limit, balance){
         this.name = name,
         this.limit = limit
+        this.balance = balance
     };
 
     toJSON(){
@@ -27,7 +28,7 @@ export class DebitCard{
     toJSON(){
         return {
             name: this.name,
-            linkedAccount: this.linkedAccount.toJSON() || this.linkedAccount
+            linkedAccount: this.linkedAccount
         }
     }
 
