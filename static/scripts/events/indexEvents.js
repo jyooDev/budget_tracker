@@ -1,12 +1,14 @@
-import { toggleItem, hideItem, populateCurrencyDatalist, populateLinkedAccountList } from "../ui/renderModals.js";
+import { toggleItem, hideItem, populateCurrencyDatalist, populateAccountList, populateIncomeCategoryList } from "../ui/renderModals.js";
 import { Account } from "../models/Account.js";
 import { DebitCard, CreditCard } from "../models/PaymentMethod.js";
-import { createAccount } from "../controllers/AccountController.js";
+import { createAccount, getAccountByName } from "../controllers/AccountController.js";
 import { createCreditCard, createDebitCard } from "../controllers/PaymentMethodController.js";
+import { addIncome, addTransaction } from "../controllers/TransactionController.js";
 
 const quickTools = {
     'indexAddAccountToggleButton' : 'addAccountModal',
-    'indexAddCardToggleButton' : 'addCardModal'
+    'indexAddCardToggleButton' : 'addCardModal',
+    'indexAddIncomeToggleButton' : 'addIncomeModal',
 };
 
 export function bindIndexEvents(){
@@ -14,8 +16,10 @@ export function bindIndexEvents(){
         quickToolBarEvent(buttonId, modalId);
     }
     populateCurrencyDatalist();
-    populateLinkedAccountList();
+    populateAccountList();
+    populateIncomeCategoryList();
     addNewAccountFormSubmitEvent();
+    addIncomeFormSubmitEvent();
     addCardEvent();
 }
 
@@ -102,6 +106,29 @@ function addCardFormSubmitEvent(){
             success = createDebitCard(card);
         }
         window.alert(success.message);
+        location.reload();
 
+    })
+}
+
+function addIncomeFormSubmitEvent(){
+    const form = document.getElementById('addIncomeForm');
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData);
+        let success;
+        if(data.account==='cash'){
+            let balance = JSON.parse(localStorage.getItem('cash')) || 0;
+            let newBalnace = parseFloat(balance) + parseFloat(data.amount);
+            localStorage.setItem('cash', JSON.stringify(newBalnace));
+            addTransaction('income', data.category, data.amount, newBalnace, data.note, 'cash', null);
+            success = { 'success' : true, 'message': `Transaction is processed successfully! \nNew Cash Balance: ${newBalnace}`}; 
+        }else{
+            success = addIncome(data.category, data.amount, data.note, data.account);
+        }
+        window.alert(success.message);
+        location.reload();
     })
 }

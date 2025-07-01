@@ -22,6 +22,6 @@ export class Account {
     }
     
     static fromJSON(account){
-        return new Account(account.name, account.nickname, account.type, account.currency, account.balance);
+        return new Account(account.name, account.type, account.currency, account.balance, account.nickname);
     }
 }

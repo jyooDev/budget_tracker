@@ -30,15 +30,36 @@ export async function populateCurrencyDatalist(){
     awesome.evaluate();
 }
 
-export async function populateLinkedAccountList(){
+export async function populateAccountList(){
     const selectContainer = document.getElementById('indexLinkedAccount');
+    const addIncomeAccountSelect = document.getElementById('addIncomeAccountSelect');
     const list = getAllAccounts();
     list.forEach(account => {
         const option = document.createElement('option');
         option.value = account.name;
         option.textContent = account.name;
         selectContainer.appendChild(option);
-    })
-    selectContainer.addEventListener('change', () => {
+        addIncomeAccountSelect.appendChild(option);
+    });
+}
+
+export async function populateIncomeCategoryList(){
+    const addIncomeCategorySelect = document.getElementById('addIncomeCategorySelect');
+    let list = JSON.parse(localStorage.getItem('incomeTypes')) || [] ;
+    if (list.length == 0){
+        list = [
+        'salary',
+        'bonus',
+        'side income',
+        'pin money',
+        'allowance'
+        ];
+        localStorage.setItem('incomeTypes', JSON.stringify(list));           
+    }
+    list.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        addIncomeCategorySelect.appendChild(option);
     })
 }
