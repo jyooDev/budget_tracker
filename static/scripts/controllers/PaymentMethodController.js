@@ -1,4 +1,5 @@
 import { CreditCard, DebitCard } from "../models/PaymentMethod.js";
+import { getAccountByName } from "./AccountController.js";
 
 // CREDIT CARD
 export function createCreditCard(card){
@@ -58,7 +59,7 @@ export function getAllDebitCards(){
     let cards = JSON.parse(localStorage.getItem('debitcards')) || [];
     let cardObjs = [];
     Object.values(cards).forEach(item => {
-        cardObjs.push(DebitCard.fromJSON(item.toJSON()));
+        cardObjs.push(DebitCard.fromJSON());
     });
     return cardObjs;
 }
