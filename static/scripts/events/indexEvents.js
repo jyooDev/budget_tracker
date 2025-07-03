@@ -107,7 +107,7 @@ function addCardFormSubmitEvent(){
             let card = new DebitCard(data.name, data.linkedAccount);
             console.log(card);
 
-            success = createDebitCard(card);
+            success = w(card);
         }
         window.alert(success.message);
         location.reload();
