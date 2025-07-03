@@ -26,14 +26,17 @@ export function addTransaction(type, category, amount, balance, note, account, p
     localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-export function addExpense(accountName, expense){
-    const accounts = getAllAccounts();
-    const targetAccount = accounts.find(account => account.name === accountName);
-    if(targetAccount){
-        targetAccount.balance = parseFloat(targetAccount.balance) - parseFloat(expense);
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        return { 'success' : true, 'message': `Transaction is processed successfully! \nAccount: "${targetAccount.name}" New Balance: ${targetAccount.balance}`} ;
-    }else{
-        return { 'success' : false, 'message': `Account with name ${accountName} not found.`}; 
-    }    
+
+export function addExpense(category, amount, note, paymentMethod, paymentType){
+    console.log(paymentType);
+    if (paymentType === 'cash'){
+
+    }else if (paymentType === 'creditCard'){
+        const cards = getAllCreditCards();
+    }else if (paymentType === 'debitCard'){
+
+    }else if (paymentType === 'bankTransfer'){
+
+    }
+    return true;
 }

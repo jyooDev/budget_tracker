@@ -1,3 +1,4 @@
+import { getAccountByName } from '../controllers/AccountController.js';
 import { Account} from './Account.js';
 
 export class CreditCard{
@@ -10,12 +11,13 @@ export class CreditCard{
     toJSON(){
         return {
             name: this.name,
-            limit: this.limit
+            limit: this.limit,
+            balance:  this.balance
         };
     }
 
     static fromJSON(card){
-        return new CreditCard(card.name, card.limit);
+        return new CreditCard(card.name, card.limit, card.balance);
     }
 }
 
@@ -26,9 +28,16 @@ export class DebitCard{
     };
 
     toJSON(){
+        const account = getAccountByName(this.linkedAccount);
         return {
             name: this.name,
-            linkedAccount: this.linkedAccount
+            linkedAccount: {
+                name: account.name,
+                nickname: account.nickname,
+                type: account.type,
+                currency: account.currency,
+                balance: account.balance
+            }
         }
     }
 

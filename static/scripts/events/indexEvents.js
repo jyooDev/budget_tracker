@@ -1,14 +1,15 @@
-import { toggleItem, hideItem, populateCurrencyDatalist, populateAccountList, populateIncomeCategoryList } from "../ui/renderModals.js";
+import { toggleItem, hideItem, populateCurrencyDatalist, populateAccountList, populateIncomeCategoryList, populateExpenseCategoryList, populatePaymentMethodList} from "../ui/renderModals.js";
 import { Account } from "../models/Account.js";
 import { DebitCard, CreditCard } from "../models/PaymentMethod.js";
 import { createAccount, getAccountByName } from "../controllers/AccountController.js";
 import { createCreditCard, createDebitCard } from "../controllers/PaymentMethodController.js";
-import { addIncome, addTransaction } from "../controllers/TransactionController.js";
+import { addIncome, addExpense, addTransaction } from "../controllers/TransactionController.js";
 
 const quickTools = {
     'indexAddAccountToggleButton' : 'addAccountModal',
     'indexAddCardToggleButton' : 'addCardModal',
     'indexAddIncomeToggleButton' : 'addIncomeModal',
+    'indexAddExpenseToggleButton' : 'addExpenseModal',
 };
 
 export function bindIndexEvents(){
@@ -17,10 +18,13 @@ export function bindIndexEvents(){
     }
     populateCurrencyDatalist();
     populateAccountList();
+    populateExpenseCategoryList();
     populateIncomeCategoryList();
+    populatePaymentMethodList();
     addNewAccountFormSubmitEvent();
     addIncomeFormSubmitEvent();
     addCardEvent();
+    addExpenseFormSubmitEvent();
 }
 
 function quickToolBarEvent(buttonId, modalId){
@@ -131,4 +135,24 @@ function addIncomeFormSubmitEvent(){
         window.alert(success.message);
         location.reload();
     })
+}
+
+function addExpenseFormSubmitEvent(){
+    const form = document.getElementById('addExpenseForm');
+    const addExpensePaymentMethodSelect = document.getElementById('addExpensePaymentMethodSelect');
+
+    addExpensePaymentMethodSelect.addEventListener('change', () => {
+        const selected = addExpensePaymentMethodSelect.options[addExpensePaymentMethodSelect.selectedIndex];
+        const paymentType = selected.getAttribute('paymenttype');
+        const balance = selected.dataset.balance;
+        console.log(balance);
+    });
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData);
+        addExpense('grocery', 300, 'weekly grocery chicken', 'credit card', 'credit card');
+    })
+
+    
 }
