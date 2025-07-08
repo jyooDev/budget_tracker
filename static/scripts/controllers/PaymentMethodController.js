@@ -38,7 +38,7 @@ export function getAllCreditCards(){
 export function createDebitCard(card){
     let cards = JSON.parse(localStorage.getItem('debitcards')) || [];
     let newCard;
-    
+    console.log(cards);
     const matchingAccount = cards.filter(item => item.name === card.name);
     if (matchingAccount.length > 0){
         console.warn(`Failed to add account ${card.name} : card with the same name already exists.`);
@@ -46,6 +46,7 @@ export function createDebitCard(card){
     }
     
     if(card instanceof DebitCard){
+        console.log('instance')
         newCard = card.toJSON();
     }else{
         newCard = card;
@@ -59,7 +60,7 @@ export function getAllDebitCards(){
     let cards = JSON.parse(localStorage.getItem('debitcards')) || [];
     let cardObjs = [];
     Object.values(cards).forEach(item => {
-        cardObjs.push(DebitCard.fromJSON());
+        cardObjs.push(DebitCard.fromJSON(item));
     });
     return cardObjs;
 }

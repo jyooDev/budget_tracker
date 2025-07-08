@@ -28,26 +28,19 @@ export class DebitCard{
     };
 
     toJSON(){
-        const account = getAccountByName(this.linkedAccount);
         return {
             name: this.name,
             linkedAccount: {
-                name: account.name,
-                nickname: account.nickname,
-                type: account.type,
-                currency: account.currency,
-                balance: account.balance
+                name: this.linkedAccount.name,
+                nickname: this.linkedAccount.nickname,
+                type: this.linkedAccount.type,
+                currency: this.linkedAccount.currency,
+                balance: this.linkedAccount.balance
             }
         }
     }
 
     static fromJSON(card){
-        const linkedAccount = new Account(
-            card.linkedAccount.name,
-            card.linkedAccount.nickname,
-            card.linkedAccount.type,
-            card.linkedAccount.currency,
-            card.linkedAccount.balance);
-        return new DebitCard(card.name, linkedAccount);
+        return new DebitCard(card.name, card.linkedAccount.name);
     }
 }

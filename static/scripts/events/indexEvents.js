@@ -57,8 +57,8 @@ function addNewAccountFormSubmitEvent(){
         }
         const success = createAccount(account);
         window.alert(success.message);
+        location.reload();
     })
-
 }
 
 function addCardEvent(){
@@ -100,14 +100,12 @@ function addCardFormSubmitEvent(){
         const data = Object.fromEntries(formData);
         let success; 
         if(data.type === 'credit'){
-            let card = new CreditCard(data.name, data.limit, data.balance);
-            console.log(card);
-            success = createCreditCard(card);
+            const creditCard = new CreditCard(data.name, data.limit, data.balance);
+            success = createCreditCard(creditCard);
         }else if(data.type === 'debit'){
-            let card = new DebitCard(data.name, data.linkedAccount);
-            console.log(card);
-
-            success = w(card);
+            const linkedAccount = getAccountByName(data.linkedAccount);
+            const debitCard = new DebitCard(data.name, linkedAccount);
+            success = createDebitCard(debitCard);
         }
         window.alert(success.message);
         location.reload();
@@ -117,7 +115,7 @@ function addCardFormSubmitEvent(){
 
 function addIncomeFormSubmitEvent(){
     const form = document.getElementById('addIncomeForm');
-
+    const addIncomeAccountSelect = document.getElementById('addIncomeAccountSelect');
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);

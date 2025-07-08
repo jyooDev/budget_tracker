@@ -2,7 +2,13 @@ import { getAllAccounts } from './AccountController.js';
 import { Transaction } from '../models/Transaction.js';
 
 export function getAllTransactions(){
-
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    let transactionObjs = [];
+    Object.values(transactions).forEach(item => {
+        console.log(item);
+        transactionObjs.push(Transaction.fromJSON(item));
+    });
+    return transactionObjs;
 }
 
 export function addIncome(category, amount, note, account){

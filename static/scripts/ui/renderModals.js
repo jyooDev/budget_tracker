@@ -34,14 +34,19 @@ export async function populateCurrencyDatalist(){
 export function populateAccountList(){
     const addIncomeAccountSelect = document.getElementById('addIncomeAccountSelect');
     const addCardAccountSelect = document.getElementById('addCardAccountSelect');
+    const accountSelectDropdowns = document.querySelectorAll('.account-select-dropdown');
     const list = getAllAccounts();
-    console.log(list);
     list.forEach(account => {
-        const option = document.createElement('option');
-        option.value = account.name;
-        option.textContent = account.name;
-        addIncomeAccountSelect.appendChild(option);
-        addCardAccountSelect.appendChild(option);
+        const option1 = document.createElement('option');   
+
+        option1.value = account.name;
+        option1.textContent = account.name;
+        addIncomeAccountSelect.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = account.name;
+        option2.textContent = account.name;
+        addCardAccountSelect.appendChild(option2);
     });
 }
 

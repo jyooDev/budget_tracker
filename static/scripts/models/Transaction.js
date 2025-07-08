@@ -2,7 +2,7 @@
 
 export class Transaction {
     constructor(transactionType, category, amount, newBalance, note, linkedAccount=null, paymentMethod = null){
-        this.transasctionType = transactionType
+        this.transaction = transactionType
         this.category = category;
         this.amount = amount;
         this.newBalance = newBalance;
@@ -19,7 +19,7 @@ export class Transaction {
 
     toJSON() {
         return {
-            transasctionType: this.transasctionType,
+            transaction: this.transaction,
             category: this.category,
             amount: this.amount,
             newBalance: this.newBalance,
@@ -33,7 +33,7 @@ export class Transaction {
     }
     
     static fromJSON(transaction){
-        const obj = new Transaction(transaction.transactionType, transaction.category, transaction.amount, transaction.newBalance, transaction.amount, transaction.newBalance, transaction.note, transaction.linkedAccount, transaction.paymentMethod);
+        const obj = new Transaction(transaction.transaction, transaction.category, transaction.amount, transaction.newBalance, transaction.amount, transaction.newBalance, transaction.note, transaction.linkedAccount, transaction.paymentMethod);
         obj.date = {
             'date': transaction.date,
             'month': transaction.month,
