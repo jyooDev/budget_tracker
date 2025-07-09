@@ -7,6 +7,7 @@
     <link href="../dist/output.css" rel="stylesheet">
     <link rel="stylesheet" href="./node_modules/awesomplete/awesomplete.css" />
     <script src="./node_modules/awesomplete/awesomplete.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -61,13 +62,54 @@
         <div class="bg-gray-200 dark:bg-gray-600 col-span-1 rounded-md flex flex-col p-3">
             <h1 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Quick ToolBar</h1>
             <div class="grid grid-cols-2 grid-rows-2 gap-3 w-full h-full text-sm">
-                <button id="indexAddAccountToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-neutral-300 dark:bg-neutral-400 hover:bg-neutral-400 dark:hover:bg-neutral-500 rounded-lg col-span-1 text-gray-900 dark:text-white ">Account</button>
-                <button id="indexAddCardToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-slate-300 dark:bg-slate-400 hover:bg-slate-400 dark:hover:bg-slate-500 rounded-lg col-span-1 text-gray-900 dark:text-white">Card</button>
-                <button id="indexAddIncomeToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-slate-300 dark:bg-slate-400 hover:bg-slate-400 dark:hover:bg-slate-500 rounded-lg col-span-1 text-gray-900 dark:text-white">Income</button>
-                <button id="indexAddExpenseToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-neutral-300 dark:bg-neutral-400 hover:bg-neutral-400 dark:hover:bg-neutral-500 rounded-lg col-span-1 text-gray-900 dark:text-white">Expense</button>
+                <button id="indexAddAccountToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-neutral-300 dark:bg-neutral-400 hover:bg-neutral-400 dark:hover:bg-neutral-500 rounded-2xl col-span-1 text-gray-900 dark:text-white ">Account</button>
+                <button id="indexAddCardToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-slate-300 dark:bg-slate-400 hover:bg-slate-400 dark:hover:bg-slate-500 rounded-2xl col-span-1 text-gray-900 dark:text-white">Card</button>
+                <button id="indexAddIncomeToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-slate-300 dark:bg-slate-400 hover:bg-slate-400 dark:hover:bg-slate-500 rounded-2xl col-span-1 text-gray-900 dark:text-white">Income</button>
+                <button id="indexAddExpenseToggleButton" class="font-semibold text-xl shadow flex justify-center items-center bg-neutral-300 dark:bg-neutral-400 hover:bg-neutral-400 dark:hover:bg-neutral-500 rounded-2xl col-span-1 text-gray-900 dark:text-white">Expense</button>
             </div>
         </div>
-        <div class="bg-gray-200 dark:bg-gray-600 col-span-2 rounded-md"></div>
+        <div class="bg-gray-200 dark:bg-gray-600 col-span-2 rounded-md p-3 h-full ">
+            <h1 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Currency Rates</h1>
+            <div class="flex w-full justify-between gap-1 px-1">
+                <div class="sm:w-1/2 relative">
+                    <button id="fromCurrencyRateDropdownButton" class="inline-flex justify-between w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  h-12 text-center items-center dark:bg-white/75 dark:hover:bg-white/50 dark:text-gray-800 dark:focus:ring-gray-800" type="button"><span>FROM</span><div></div>
+                    </button>
+                    <div id="currencyRateFrom" class="w-full hidden absolute z-10 bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <ul id="currencyRateFromList" class="currencyRateList h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200">
+                    </ul>
+                    </div>
+                </div>
+                <div class="sm:w-1/2 relative">
+                    <button id="toCurrencyRateDropdownButton" class="inline-flex items-center justify-between w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-white/75 dark:hover:bg-white/50 dark:text-gray-800 dark:focus:ring-gray-800 h-12" type="button"><span>TO</span><div></div>
+                    </button>
+                    <div id="currencyRateTo" class="w-full hidden absolute z-10 bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <ul id="currencyRateToList" class="currencyRateList h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200">
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="currencyChartSection" class="mt-1">
+            </div>
+        </div>    
+
+<!-- Dropdown menu -->
+<div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+      <li>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+      </li>
+      <li>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+      </li>
+      <li>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+      </li>
+      <li>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+      </li>
+    </ul>
+</div>
+        </div>
         <div class="bg-gray-200 dark:bg-gray-600 col-span-1 rounded-md"></div>
         <div class="bg-gray-200 dark:bg-gray-600 col-span-1 rounded-md"></div>
         <div class="bg-gray-200 dark:bg-gray-600 col-span-1 rounded-md"></div>
@@ -302,4 +344,5 @@
     <link href="../node_modules/flowbite/dist/flowbite.min.css"></link>
     <script type="module" src="../static/scripts/main.js" rel="script"></script>
 </body>
+
 </html>

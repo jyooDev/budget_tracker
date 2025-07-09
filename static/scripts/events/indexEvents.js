@@ -1,9 +1,11 @@
-import { toggleItem, hideItem, populateCurrencyDatalist, populateAccountList, populateIncomeCategoryList, populateExpenseCategoryList, populatePaymentMethodList} from "../ui/renderModals.js";
+import { toggleItem, hideItem, populateCurrencyDatalist, populateAccountList, populateIncomeCategoryList, populateExpenseCategoryList, populatePaymentMethodList, populateCurrencyRateList, renderCurrencyChart} from "../ui/renderIndexComponents.js";
 import { Account } from "../models/Account.js";
 import { DebitCard, CreditCard } from "../models/PaymentMethod.js";
 import { createAccount, getAccountByName } from "../controllers/AccountController.js";
 import { createCreditCard, createDebitCard } from "../controllers/PaymentMethodController.js";
 import { addIncome, addExpense, addTransaction } from "../controllers/TransactionController.js";
+import { fetchCurrencyChange } from "../apis/currencyAPI.js";
+import { createChart } from "../utils/chart.js";
 
 const quickTools = {
     'indexAddAccountToggleButton' : 'addAccountModal',
@@ -18,13 +20,16 @@ export function bindIndexEvents(){
     }
     populateCurrencyDatalist();
     populateAccountList();
+    populateCurrencyRateList();
     populateExpenseCategoryList();
     populateIncomeCategoryList();
     populatePaymentMethodList();
+    renderCurrencyChart();
     addNewAccountFormSubmitEvent();
     addIncomeFormSubmitEvent();
     addCardEvent();
     addExpenseFormSubmitEvent();
+    currencyRateChangeEvent();
 }
 
 function quickToolBarEvent(buttonId, modalId){
@@ -150,7 +155,68 @@ function addExpenseFormSubmitEvent(){
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
         addExpense('grocery', 300, 'weekly grocery chicken', 'credit card', 'credit card');
-    })
+    })    
+}
 
+function currencyRateChangeEvent(){
+    const fromButton = document.getElementById('fromCurrencyRateDropdownButton');
+    const fromDropdownWrapper = document.getElementById('currencyRateFrom');
+    const fromDropdownList = document.getElementById('currencyRateFromList');
+    const toButton = document.getElementById('toCurrencyRateDropdownButton');
+    const toDropdownListWrapper = document.getElementById('currencyRateTo');
+    const toDropdownList = document.getElementById('currencyRateToList');
+    fromButton.addEventListener('click', () => {
+        toggleItem(fromDropdownWrapper);
+    });
+
+    fromDropdownList.addEventListener('click', async function(event) {
+        if (event.target && event.target.tagName === 'A') {
+            const currencyCode = event.target.getAttribute('currency-code');
+            //first render image 
+            const imgElement = event.target.firstElementChild;
+            const clone = imgElement.cloneNode(true);
+            fromButton.firstElementChild.nextElementSibling.innerHTML = ''
+            fromButton.firstElementChild.nextElementSibling.appendChild(clone);
+            //store in local storage
+            localStorage.setItem('fromCurrencyCode', currencyCode);
+            console.log(localStorage.getItem('fromCurrencyCode'));
+            //toggle off the dropdown
+            toggleItem(fromDropdownWrapper);
+            //check if both from and to are selected if it is show the currency changes
+            const toSelect = localStorage.getItem('toCurrencyCode')
+
+            if (toSelect != null){
+                //fetchcurrencyinfo
+                //render fetched currency info 
+            }
+        }
+    });
+
+
+    toButton.addEventListener('click', () => {
+        toggleItem(toDropdownListWrapper);
+    });
     
+
+    toDropdownList.addEventListener('click', async function(event) {
+        if (event.target && event.target.tagName === 'A') {
+            const currencyCode = event.target.getAttribute('currency-code');
+            //first render image 
+            const imgElement = event.target.getElementsByTagName('img')[0];
+            const clone = imgElement.cloneNode(true);
+            toButton.firstElementChild.nextElementSibling.innerHTML = ''
+            toButton.firstElementChild.nextElementSibling.appendChild(clone);
+            //store in local storage
+            localStorage.setItem('toCurrencyCode', currencyCode);
+            //toggle off the dropdown
+            toggleItem(toDropdownListWrapper);
+            //check if both from and to are selected if it is show the currency changes
+            const fromSelect = localStorage.getItem('fromCurrencyCode')
+            if (fromSelect != null){
+                const result = await fetchCurrencyChange(fromSelect, currencyCode);
+                console.log(result);
+                createChart(Chart, result.dates, result.currencyRates, fromSelect);
+            }
+        }
+    });
 }

@@ -1,12 +1,14 @@
 
-import { fetchCurrencyList } from "../apis/currencyAPI.js";
+import { fetchCurrencyChange, fetchCurrencyList } from "../apis/currencyAPI.js";
 import { getAllAccounts } from "../controllers/AccountController.js";
 import { getAllCreditCards, getAllDebitCards } from "../controllers/PaymentMethodController.js";
+import { currencyInfo } from "../utils/constants.js";
+import { createChart } from "../utils/chart.js";
+
 
 export function toggleItem(item){
     item.classList.toggle('hidden');
 };
-
 export function hideItem(item){
     item.classList.add('hidden');
 }
@@ -71,7 +73,20 @@ export function populateIncomeCategoryList(){
     })
 }
 
+export function populateCurrencyRateList(){
+    const dropDownLists = document.querySelectorAll('.currencyRateList');
+    Object.entries(currencyInfo).forEach(([currencyCode, imgApiCode]) => {
+        dropDownLists.forEach(dropdown => {
+          const li = document.createElement('li');
+          li.innerHTML = `<a href="#" currency-code=${currencyCode} class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+          <img class="w-6 h-6 me-2 rounded-full" src="https://flagsapi.com/${imgApiCode}/flat/24.png" alt="${imgApiCode}-flag">
+          ${currencyCode}
+        </a>`;
+          dropdown.appendChild(li);
+      })
+    })
 
+}
 
 export function populateExpenseCategoryList(){
     const addIncomeCategorySelect = document.getElementById('addExpenseCategorySelect');
@@ -147,4 +162,24 @@ export function populatePaymentMethodList(){
         addExpensePaymentMethodSelect.appendChild(option);
     })
 
+}
+
+export async function renderCurrencyChart(){
+    const fromSelect = localStorage.getItem('fromCurrencyCode');
+    const toSelect = localStorage.getItem('toCurrencyCode');
+
+    const fromButton = document.getElementById('fromCurrencyRateDropdownButton');
+    const toButton = document.getElementById('toCurrencyRateDropdownButton');
+    if(fromSelect && toSelect){
+        const data = await fetchCurrencyChange(fromSelect,toSelect);
+        const toImg = document.querySelector(`[currency-code="${toSelect}"]`).firstElementChild;
+        const fromImg = document.querySelector(`[currency-code="${fromSelect}"]`).firstElementChild;
+        const cloneTo = toImg.cloneNode(true);
+        const cloneFrom = fromImg.cloneNode(true);
+        toButton.firstElementChild.nextElementSibling.innerHTML = '';
+        toButton.firstElementChild.nextElementSibling.appendChild(cloneTo);
+        fromButton.firstElementChild.nextElementSibling.innerHTML = '';
+        fromButton.firstElementChild.nextElementSibling.appendChild(cloneFrom);
+        createChart(Chart, data.dates, data.currencyRates, fromSelect);
+    }
 }
