@@ -33,7 +33,7 @@ export class Transaction {
     }
     
     static fromJSON(transaction){
-        const obj = new Transaction(transaction.transaction, transaction.category, transaction.amount, transaction.newBalance, transaction.amount, transaction.newBalance, transaction.note, transaction.linkedAccount, transaction.paymentMethod);
+        const obj = new Transaction(transaction.transaction, transaction.category, transaction.amount, transaction.newBalance, transaction.note, transaction.linkedAccount, transaction.paymentMethod);
         obj.date = {
             'date': transaction.date,
             'month': transaction.month,

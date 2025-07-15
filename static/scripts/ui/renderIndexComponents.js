@@ -1,6 +1,6 @@
 
 import { fetchCurrencyChange, fetchCurrencyList } from "../apis/currencyAPI.js";
-import { getAllAccounts } from "../controllers/AccountController.js";
+import { getAllAccounts, getAccountByName } from "../controllers/AccountController.js";
 import { getAllCreditCards, getAllDebitCards } from "../controllers/PaymentMethodController.js";
 import { currencyInfo } from "../utils/constants.js";
 import { createChart } from "../utils/chart.js";
@@ -149,7 +149,7 @@ export function populatePaymentMethodList(){
         const option = document.createElement('option');
         option.value = card.name;
         option.textContent = card.name;
-        option.dataset.balance = card.balance;
+        option.dataset.balance = getAccountByName(card.linkedAccount).balance
         option.setAttribute('paymentType', 'debitcard');
         addExpensePaymentMethodSelect.appendChild(option);
     })
@@ -157,7 +157,7 @@ export function populatePaymentMethodList(){
         const option = document.createElement('option');
         option.value = account.name;
         option.textContent = `Bank Transfer : ${account.name}`;
-        option.setAttribute('paymentType', 'account');
+        option.setAttribute('paymentType', 'bank-transfer');
         option.dataset.balance = account.balance;
         addExpensePaymentMethodSelect.appendChild(option);
     })

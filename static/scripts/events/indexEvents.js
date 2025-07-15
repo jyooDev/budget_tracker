@@ -143,18 +143,32 @@ function addIncomeFormSubmitEvent(){
 function addExpenseFormSubmitEvent(){
     const form = document.getElementById('addExpenseForm');
     const addExpensePaymentMethodSelect = document.getElementById('addExpensePaymentMethodSelect');
-
+    let paymentType;
     addExpensePaymentMethodSelect.addEventListener('change', () => {
         const selected = addExpensePaymentMethodSelect.options[addExpensePaymentMethodSelect.selectedIndex];
-        const paymentType = selected.getAttribute('paymenttype');
+        paymentType = selected.getAttribute('paymentType');
         const balance = selected.dataset.balance;
+        console.log(paymentType);
+        console.log(selected);
         console.log(balance);
     });
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
-        addExpense('grocery', 300, 'weekly grocery chicken', 'credit card', 'credit card');
+        let success;
+        console.log(data);
+        if(data.account==='cash'){
+            let balance = JSON.parse(localStorage.getItem('cash')) || 0;
+            let newBalance = parseFloat(balance) - parseFloat(data.amount);
+            localStorage.setItem('cash', JSON.stringify(newBalance));
+            addTransaction('expense', data.category, data.amount, newBalance, data.note, null, 'cash');
+            success = { 'success' : true, 'message': `Transaction is processed successfully! \nNew Cash Balance: ${newBalance}`}; 
+        }else{
+            success = addExpense(data.category, data.amount, data.note, data.method, paymentType);
+        }
+        window.alert(success.message);
+        location.reload();
     })    
 }
 
